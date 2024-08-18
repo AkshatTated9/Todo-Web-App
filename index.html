@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+<script>
+    getlist();
+    function parsedresponse(data) {
+        console.log(data)
+
+
+    }
+    function callback(resp) {
+        resp.json().then(parsedresponse);
+    }
+    function onpress() {
+        fetch("http://localhost:3000/todo", {
+            method: "POST",
+            body: JSON.stringify({
+                name: document.getElementById("t1").value,
+                desc: document.getElementById("t2").value
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(callback)
+    }
+    function deletedone(resp) {
+        console.log("deleted")
+
+    }
+    function deletetodo(id) {
+        console.log(id)
+        fetch("http://localhost:3000/todo/" + id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(deletedone)
+    }
+    function parsedresponse1(data) {
+        var parentElement = document.getElementById("mainArea");
+        // parentElement.innerHTML=JSON.stringify(data);
+        for (var i = 0; i < data.length; i++) {
+            var childelement = document.createElement("div");
+            var grandchild1 = document.createElement("span")
+            grandchild1.style.color="brown"
+             grandchild1.style.margin="0px 5px"
+            grandchild1.innerHTML = data[i].name;
+
+            var grandchild2 = document.createElement("span")
+            grandchild2.innerHTML = data[i].desc;
+
+            var grandchild3 = document.createElement("button")
+            grandchild3.innerHTML = "Delete";
+            grandchild3.style.margin="10px 5px";
+            grandchild3.style.backgroundColor="whitesmoke";
+            grandchild3.style.borderRadius="9px";
+            grandchild3.setAttribute("onclick", "deletetodo(" + data[i].id + ")")
+
+            childelement.appendChild(grandchild1);
+            childelement.appendChild(grandchild2);
+            childelement.appendChild(grandchild3);
+            parentElement.appendChild(childelement);
+        }
+
+    }
+    function callback1(resp) {
+        resp.json().then(parsedresponse1)
+    }
+    function getlist() {
+        fetch("http://localhost:3000/todoslist", {
+            method: "GET",
+        }).then(callback1)
+    }
+
+</script>
+
+<body
+    style="background: rgb(63,94,251);
+background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 90%); display: flex; justify-content: center;">
+    <div class="Todocard"
+        style="display: flex;justify-content: center; align-items: center; flex-direction: column; background-color: white; margin-top: 100px; border-radius: 12px; padding: 30px;">
+        <form action="">
+            <h1>Todo App</h1>
+            <div style="margin: 20px 0px; font-family:'Times New Roman', Times, serif; ">
+                <span style="font-family: cursive; padding-right: 45px;"> Todo Name</span>
+                <input type="text" id="t1" style="background-color: antiquewhite;">
+            </div>
+            <div style="margin: 20px 0px; font-family:'Times New Roman', Times, serif; ">
+                <span style="font-family: cursive;"> Todo Description</span>
+                <input type="text" id="t2" style="background-color: antiquewhite;">
+            </div>
+            <div style="padding: 9px 0px;">
+                <button onclick="onpress()" style="    border-radius: 9px;
+                background-color: whitesmoke;
+                font-family: cursive;">Submit</button>
+                <br>
+                <br>
+                <hr>
+                <span style="font-family: cursive;"> Todo List </span>
+                <hr>
+            </div>
+            <div id="mainArea" style=" border-radius: 9px; font-family: cursive">
+
+            </div>
+        </form>
+    </div>
+
+
+</body>
+
+</html>
